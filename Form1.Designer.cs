@@ -41,6 +41,7 @@ namespace MediaAlunosExcel
             this.cbNota1 = new System.Windows.Forms.ComboBox();
             this.cbNota2 = new System.Windows.Forms.ComboBox();
             this.btnOk = new System.Windows.Forms.Button();
+            this.btnImprimir = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblNome
@@ -111,19 +112,30 @@ namespace MediaAlunosExcel
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(219, 119);
+            this.btnOk.Location = new System.Drawing.Point(16, 151);
             this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(157, 23);
+            this.btnOk.Size = new System.Drawing.Size(161, 23);
             this.btnOk.TabIndex = 7;
             this.btnOk.Text = "OK";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
+            // btnImprimir
+            // 
+            this.btnImprimir.Location = new System.Drawing.Point(208, 151);
+            this.btnImprimir.Name = "btnImprimir";
+            this.btnImprimir.Size = new System.Drawing.Size(168, 23);
+            this.btnImprimir.TabIndex = 8;
+            this.btnImprimir.Text = "IMPRIMIR";
+            this.btnImprimir.UseVisualStyleBackColor = true;
+            this.btnImprimir.Click += new System.EventHandler(this.btnImprimir_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(401, 181);
+            this.ClientSize = new System.Drawing.Size(401, 208);
+            this.Controls.Add(this.btnImprimir);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.cbNota2);
             this.Controls.Add(this.cbNota1);
@@ -153,6 +165,7 @@ namespace MediaAlunosExcel
         private System.Windows.Forms.ComboBox cbNota1;
         private System.Windows.Forms.ComboBox cbNota2;
         private System.Windows.Forms.Button btnOk;
+        private System.Windows.Forms.Button btnImprimir;
     }
 }
 

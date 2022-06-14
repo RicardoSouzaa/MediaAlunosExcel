@@ -4,15 +4,17 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace MediaAlunosExcel
 {
     public partial class Form1 : Form
     {
-        private string aluno, aprovado, livro;
+        private string aluno, aprovado, livro, documento;
         private int freq1, freq2;
         private float media;
         private Excel.Application excelApp;
+        private Word.Application wordApp;
 
         public Form1()
         {
@@ -114,6 +116,11 @@ namespace MediaAlunosExcel
         private void SalvarPlanilha()
         {
             excelApp.ActiveWorkbook.Save();
+        }
+
+        private void SalvarDocumento()
+        {
+            wordApp.Documents.Save();
         }
 
         private void AbrirPlanilha()
@@ -268,6 +275,53 @@ namespace MediaAlunosExcel
             SalvarPlanilha();
         }
 
+        private void Imprimir()
+        {
+            if (VerificarPlanilha() == true)
+            {
+                SalvarPlanilha();
+                int LinhaExcel = 2;
+                bool valor = true;
+
+                while (valor == true)
+                {
+                    if (excelApp.Range["E" + LinhaExcel].Value == null)
+                    {
+                        valor = false;
+                    }
+                    else
+                    {
+                        LinhaExcel = LinhaExcel + 1;
+                    }
+                }
+
+                excelApp.Sheets["Planilha1"].Range["A1:E" + LinhaExcel].Copy();
+
+                wordApp = new Word.Application();
+                wordApp.Visible = true;
+                wordApp.Documents.Add();
+
+                wordApp.Selection.Font.Size = 22;
+                wordApp.Selection.Font.Underline = Word.WdUnderline.wdUnderlineSingle;
+                wordApp.Selection.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                wordApp.Selection.Font.Bold = 1;
+                wordApp.Selection.TypeText("Avaliações");
+
+                wordApp.Selection.Font.Size = 12;
+                wordApp.Selection.TypeParagraph();
+                wordApp.Selection.TypeParagraph();
+
+                wordApp.Selection.Paste();
+
+                wordApp.ActiveDocument.PrintOut();
+                //SalvarDocumento();
+            }
+            else
+            {
+                MessageBox.Show("O ficheiro ainda não foi criado!");
+            }
+        }
+
         private void btnOk_Click(object sender, EventArgs e)
         {
             if (ValidarDados() == true)
@@ -276,10 +330,16 @@ namespace MediaAlunosExcel
             }
         }
 
+        private void btnImprimir_Click(object sender, EventArgs e)
+        {
+            Imprimir();
+        }
+
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             SalvarPlanilha();
             excelApp.Quit();
+            wordApp.Quit();
         }
     }
 }
