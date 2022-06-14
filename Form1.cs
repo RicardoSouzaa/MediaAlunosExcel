@@ -85,61 +85,6 @@ namespace MediaAlunosExcel
             }
         }
 
-        private void CriarDocumento()
-        {
-            try
-            {
-                if (VerificarPlanilha() == true)
-                {
-                    SalvarPlanilha();
-                    int LinhaExcel = 2;
-                    bool valor = true;
-
-                    while (valor == true)
-                    {
-                        if (excelApp.Range["E" + LinhaExcel].Value == null)
-                        {
-                            valor = false;
-                        }
-                        else
-                        {
-                            LinhaExcel = LinhaExcel + 1;
-                        }
-                    }
-
-                    excelApp.Sheets["Planilha1"].Range["A1:E" + LinhaExcel].Copy();
-
-                    wordApp = new Word.Application();
-                    wordApp.Visible = true;
-                    wordApp.Documents.Add();
-
-                    wordApp.Selection.Font.Size = 22;
-                    wordApp.Selection.Font.Underline = Word.WdUnderline.wdUnderlineSingle;
-                    wordApp.Selection.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    wordApp.Selection.Font.Bold = 1;
-                    wordApp.Selection.TypeText("Avaliações");
-
-                    wordApp.Selection.Font.Size = 12;
-                    wordApp.Selection.TypeParagraph();
-                    wordApp.Selection.TypeParagraph();
-
-                    wordApp.Selection.Paste();
-
-                    wordApp.ActiveDocument.PrintOut();
-
-                    SalvarDocumentoComo();
-                }
-                else
-                {
-                    MessageBox.Show("A planilha Excel não foi criada ainda!");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Falha: " + ex.Message);
-            }
-        }
-
         private void CriarPlanilha()
         {
             excelApp.Workbooks.Add();
@@ -346,7 +291,57 @@ namespace MediaAlunosExcel
 
         private void Imprimir()
         {
-            CriarDocumento();
+            try
+            {
+                if (VerificarPlanilha() == true)
+                {
+                    SalvarPlanilha();
+                    int LinhaExcel = 2;
+                    bool valor = true;
+
+                    while (valor == true)
+                    {
+                        if (excelApp.Range["E" + LinhaExcel].Value == null)
+                        {
+                            valor = false;
+                        }
+                        else
+                        {
+                            LinhaExcel = LinhaExcel + 1;
+                        }
+                    }
+
+                    excelApp.Sheets["Planilha1"].Range["A1:E" + LinhaExcel].Copy();
+
+                    wordApp = new Word.Application();
+                    wordApp.Visible = true;
+                    wordApp.Documents.Add();
+
+                    wordApp.Selection.Font.Size = 22;
+                    wordApp.Selection.Font.Underline = Word.WdUnderline.wdUnderlineSingle;
+                    wordApp.Selection.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    wordApp.Selection.Font.Bold = 1;
+                    wordApp.Selection.TypeText("Avaliações");
+
+                    wordApp.Selection.Font.Size = 12;
+                    wordApp.Selection.TypeParagraph();
+                    wordApp.Selection.TypeParagraph();
+
+                    wordApp.Selection.Paste();
+
+                    wordApp.ActiveDocument.PrintOut();
+
+                    SalvarDocumentoComo();
+                }
+                else
+                {
+                    MessageBox.Show("A planilha Excel não foi criada ainda!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha: " + ex.Message);
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -367,6 +362,7 @@ namespace MediaAlunosExcel
             try
             {
                 SalvarPlanilha();
+                SalvarDocumentoComo();
                 excelApp.Quit();
                 wordApp.Quit();
             }
