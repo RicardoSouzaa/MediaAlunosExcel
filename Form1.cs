@@ -62,6 +62,7 @@ namespace MediaAlunosExcel
         private bool VerificarPlanilha()
         {
             livro = Application.StartupPath + "/alunos.xlsx";
+
             if (File.Exists(livro))
             {
                 return true;
@@ -69,6 +70,73 @@ namespace MediaAlunosExcel
             else
             {
                 return false;
+            }
+        }
+
+        private bool VerificarDocumento()
+        {
+            if (File.Exists(documento))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void CriarDocumento()
+        {
+            try
+            {
+                if (VerificarPlanilha() == true)
+                {
+                    SalvarPlanilha();
+                    int LinhaExcel = 2;
+                    bool valor = true;
+
+                    while (valor == true)
+                    {
+                        if (excelApp.Range["E" + LinhaExcel].Value == null)
+                        {
+                            valor = false;
+                        }
+                        else
+                        {
+                            LinhaExcel = LinhaExcel + 1;
+                        }
+                    }
+
+                    excelApp.Sheets["Planilha1"].Range["A1:E" + LinhaExcel].Copy();
+
+                    wordApp = new Word.Application();
+                    wordApp.Visible = true;
+                    wordApp.Documents.Add();
+
+                    wordApp.Selection.Font.Size = 22;
+                    wordApp.Selection.Font.Underline = Word.WdUnderline.wdUnderlineSingle;
+                    wordApp.Selection.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    wordApp.Selection.Font.Bold = 1;
+                    wordApp.Selection.TypeText("Avaliações");
+
+                    wordApp.Selection.Font.Size = 12;
+                    wordApp.Selection.TypeParagraph();
+                    wordApp.Selection.TypeParagraph();
+
+                    wordApp.Selection.Paste();
+
+                    wordApp.ActiveDocument.PrintOut();
+
+                    SalvarDocumentoComo();
+                }
+                else
+                {
+                    MessageBox.Show("A planilha Excel não foi criada ainda!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha: " + ex.Message);
             }
         }
 
@@ -118,9 +186,10 @@ namespace MediaAlunosExcel
             excelApp.ActiveWorkbook.Save();
         }
 
-        private void SalvarDocumento()
+        private void SalvarDocumentoComo()
         {
-            wordApp.Documents.Save();
+            documento = Application.StartupPath + "/alunos.docx";
+            wordApp.ActiveDocument.SaveAs2(documento);
         }
 
         private void AbrirPlanilha()
@@ -277,49 +346,7 @@ namespace MediaAlunosExcel
 
         private void Imprimir()
         {
-            if (VerificarPlanilha() == true)
-            {
-                SalvarPlanilha();
-                int LinhaExcel = 2;
-                bool valor = true;
-
-                while (valor == true)
-                {
-                    if (excelApp.Range["E" + LinhaExcel].Value == null)
-                    {
-                        valor = false;
-                    }
-                    else
-                    {
-                        LinhaExcel = LinhaExcel + 1;
-                    }
-                }
-
-                excelApp.Sheets["Planilha1"].Range["A1:E" + LinhaExcel].Copy();
-
-                wordApp = new Word.Application();
-                wordApp.Visible = true;
-                wordApp.Documents.Add();
-
-                wordApp.Selection.Font.Size = 22;
-                wordApp.Selection.Font.Underline = Word.WdUnderline.wdUnderlineSingle;
-                wordApp.Selection.Paragraphs.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                wordApp.Selection.Font.Bold = 1;
-                wordApp.Selection.TypeText("Avaliações");
-
-                wordApp.Selection.Font.Size = 12;
-                wordApp.Selection.TypeParagraph();
-                wordApp.Selection.TypeParagraph();
-
-                wordApp.Selection.Paste();
-
-                wordApp.ActiveDocument.PrintOut();
-                //SalvarDocumento();
-            }
-            else
-            {
-                MessageBox.Show("O ficheiro ainda não foi criado!");
-            }
+            CriarDocumento();
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -337,9 +364,16 @@ namespace MediaAlunosExcel
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            SalvarPlanilha();
-            excelApp.Quit();
-            wordApp.Quit();
+            try
+            {
+                SalvarPlanilha();
+                excelApp.Quit();
+                wordApp.Quit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Falha: " + ex.Message);
+            }
         }
     }
 }
